@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Medicos from "./pages/Medicos";
 import Contacto from "./pages/Contacto";
+import SacarTurno from "./pages/Turnos";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/medicos" element={<Medicos />} />
         <Route path="/contacto" element={<Contacto />} />
+        <Route path="/turnos" element={<SacarTurno />} />
       </Routes>
     </BrowserRouter>
   );

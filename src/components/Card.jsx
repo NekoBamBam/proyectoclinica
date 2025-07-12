@@ -8,19 +8,10 @@ function Card({ nombre, especialidad,dias,horarios,imagen }) {
       <p>{especialidad}</p>
       <p>{dias}</p>
       <p>{horarios}</p>
+      <button className='bg-red-500 px-4 py-3'></button>
     </div>
   )
 }
 
 export default Card
 
-/*
-export default function CardMedico({ nombre, especialidad }) {
-  return (
-    <div className="border rounded-xl p-4 shadow hover:shadow-lg transition">
-      <h3 className="text-lg font-bold">{nombre}</h3>
-      <p>{especialidad}</p>
-    </div>
-  );
-}
-*/
