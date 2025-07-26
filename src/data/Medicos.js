@@ -4,8 +4,8 @@ export const medicos = [
   {
     nombre: "Dr. Menendez Juan Carlos",
     especialidad: "Traumatologo",
-    dias: "Lunes,Miercoles y Jueves",
-    horarios: "9:30hs",
+    dias: ["Lunes","Miercoles","Jueves"],
+    horarios: ["09:30"],
     imagen: trauma,
   },
   {

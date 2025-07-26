@@ -10,15 +10,29 @@ export default function SacarTurno() {
   const [turnoConfirmado, setTurnoConfirmado] = useState(false);
 
   // Especialidades únicas
-  const especialidadesUnicas = [...new Set(medicos.map(m => m.especialidad).filter(e => e))];
+  const especialidadesUnicas = [
+    ...new Set(medicos.map((m) => m.especialidad).filter((e) => e)),
+  ];
 
   // Filtrar médicos según especialidad elegida
-  const medicosDisponibles = medicos.filter(m => m.especialidad === especialidad);
+  const medicosDisponibles = medicos.filter(
+    (m) => m.especialidad === especialidad
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Acá guardarías el turno en una base de datos o localStorage
     setTurnoConfirmado(true);
+
+    const numeroWhatsApp = "2216282112"; // ← Cambiá esto por tu número real
+
+    const mensaje = `Hola, quiero solicitar un turno.\n\n👤 Paciente: ${nombrePaciente}\n📋 Especialidad: ${especialidad}\n👨‍⚕️ Médico: ${medico}\n📅 Fecha: ${fecha}\n⏰ Hora: ${hora}`;
+
+    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(
+      mensaje
+    )}`;
+
+    // Abrir WhatsApp en nueva pestaña
+    window.open(url, "_blank");
   };
 
   return (
@@ -69,20 +83,46 @@ export default function SacarTurno() {
           </select>
 
           <input
-            type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            required
-            className="w-full border p-2 rounded"
-          />
+  type="date"
+  value={fecha}
+  onChange={(e) => {
+    const nuevaFecha = e.target.value;
+    const diaSeleccionado = new Date(nuevaFecha).getDay(); // 0 = domingo, 1 = lunes...
 
-          <input
-            type="time"
-            value={hora}
-            onChange={(e) => setHora(e.target.value)}
-            required
-            className="w-full border p-2 rounded"
-          />
+    // Buscar el médico seleccionado
+    const medicoSeleccionado = medicos.find((m) => m.nombre === medico);
+
+    if (medicoSeleccionado) {
+      // Mapeo nombres a números
+      const diasPermitidos = {
+        domingo: 0,
+        lunes: 1,
+        martes: 2,
+        miércoles: 3,
+        jueves: 4,
+        viernes: 5,
+        sábado: 6,
+      };
+
+      const diasDelMedico = medicoSeleccionado.dias.map(
+        (dia) => diasPermitidos[dia.toLowerCase()]
+      );
+
+      if (!diasDelMedico.includes(diaSeleccionado)) {
+        e.target.setCustomValidity("El médico no atiende ese día.");
+        e.target.reportValidity();
+        setFecha(""); // limpiar fecha
+        return;
+      } else {
+        e.target.setCustomValidity(""); // limpiar errores
+      }
+    }
+
+    setFecha(nuevaFecha);
+  }}
+  required
+  className="w-full border p-2 rounded"
+/>
 
           <button
             type="submit"
@@ -93,11 +133,21 @@ export default function SacarTurno() {
         </form>
       ) : (
         <div className="text-center">
-          <h3 className="text-xl font-semibold text-green-600 mb-4">✅ Turno confirmado</h3>
-          <p className="mb-2">Paciente: <strong>{nombrePaciente}</strong></p>
-          <p className="mb-2">Especialidad: <strong>{especialidad}</strong></p>
-          <p className="mb-2">Médico: <strong>{medico}</strong></p>
-          <p className="mb-2">Fecha: <strong>{fecha}</strong> a las <strong>{hora}</strong></p>
+          <h3 className="text-xl font-semibold text-green-600 mb-4">
+            ✅ Turno confirmado
+          </h3>
+          <p className="mb-2">
+            Paciente: <strong>{nombrePaciente}</strong>
+          </p>
+          <p className="mb-2">
+            Especialidad: <strong>{especialidad}</strong>
+          </p>
+          <p className="mb-2">
+            Médico: <strong>{medico}</strong>
+          </p>
+          <p className="mb-2">
+            Fecha: <strong>{fecha}</strong> a las <strong>{hora}</strong>
+          </p>
 
           <button
             onClick={() => {
