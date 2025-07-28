@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { medicos } from "../data/Medicos";
+import { obrasSociales } from "../data/obrasocial";
 
 export default function SacarTurno() {
   const [nombrePaciente, setNombrePaciente] = useState("");
   const [especialidad, setEspecialidad] = useState("");
+  const [obrasocial, setObraSocial] = useState("");
   const [medico, setMedico] = useState("");
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
@@ -25,7 +27,7 @@ export default function SacarTurno() {
 
     const numeroWhatsApp = "2216282112"; // ← Cambiá esto por tu número real
 
-    const mensaje = `Hola, quiero solicitar un turno.\n\n👤 Paciente: ${nombrePaciente}\n📋 Especialidad: ${especialidad}\n👨‍⚕️ Médico: ${medico}\n📅 Fecha: ${fecha}\n⏰ Hora: ${hora}`;
+    const mensaje = `Hola, quiero solicitar un turno.\n\n👤 Paciente: ${nombrePaciente}\n🏥 Obra Social: ${obrasocial}\n📋 Especialidad: ${especialidad}\n👨‍⚕️ Médico: ${medico}\n📅 Fecha: ${fecha}\n`;
 
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(
       mensaje
@@ -49,6 +51,19 @@ export default function SacarTurno() {
             required
             className="w-full border p-2 rounded"
           />
+          <select
+            value={obrasocial}
+            onChange={(e) => setObraSocial(e.target.value)}
+            required
+            className="w-full border p-2 rounded"
+          >
+            <option value="">Seleccione obra social</option>
+            {obrasSociales.map((obra) => (
+              <option key={obra} value={obra}>
+                {obra}
+              </option>
+            ))}
+          </select>
 
           <select
             value={especialidad}
@@ -83,46 +98,48 @@ export default function SacarTurno() {
           </select>
 
           <input
-  type="date"
-  value={fecha}
-  onChange={(e) => {
-    const nuevaFecha = e.target.value;
-    const diaSeleccionado = new Date(nuevaFecha).getDay(); // 0 = domingo, 1 = lunes...
+            type="date"
+            value={fecha}
+            onChange={(e) => {
+              const nuevaFecha = e.target.value;
+              const diaSeleccionado = new Date(nuevaFecha).getDay(); // 0 = domingo, 1 = lunes...
 
-    // Buscar el médico seleccionado
-    const medicoSeleccionado = medicos.find((m) => m.nombre === medico);
+              // Buscar el médico seleccionado
+              const medicoSeleccionado = medicos.find(
+                (m) => m.nombre === medico
+              );
 
-    if (medicoSeleccionado) {
-      // Mapeo nombres a números
-      const diasPermitidos = {
-        domingo: 0,
-        lunes: 1,
-        martes: 2,
-        miércoles: 3,
-        jueves: 4,
-        viernes: 5,
-        sábado: 6,
-      };
+              if (medicoSeleccionado) {
+                // Mapeo nombres a números
+                const diasPermitidos = {
+                  domingo: 0,
+                  lunes: 1,
+                  martes: 2,
+                  miércoles: 3,
+                  jueves: 4,
+                  viernes: 5,
+                  sábado: 6,
+                };
 
-      const diasDelMedico = medicoSeleccionado.dias.map(
-        (dia) => diasPermitidos[dia.toLowerCase()]
-      );
+                const diasDelMedico = medicoSeleccionado.dias.map(
+                  (dia) => diasPermitidos[dia.toLowerCase()]
+                );
 
-      if (!diasDelMedico.includes(diaSeleccionado)) {
-        e.target.setCustomValidity("El médico no atiende ese día.");
-        e.target.reportValidity();
-        setFecha(""); // limpiar fecha
-        return;
-      } else {
-        e.target.setCustomValidity(""); // limpiar errores
-      }
-    }
+                if (!diasDelMedico.includes(diaSeleccionado)) {
+                  e.target.setCustomValidity("El médico no atiende ese día.");
+                  e.target.reportValidity();
+                  setFecha(""); // limpiar fecha
+                  return;
+                } else {
+                  e.target.setCustomValidity(""); // limpiar errores
+                }
+              }
 
-    setFecha(nuevaFecha);
-  }}
-  required
-  className="w-full border p-2 rounded"
-/>
+              setFecha(nuevaFecha);
+            }}
+            required
+            className="w-full border p-2 rounded"
+          />
 
           <button
             type="submit"
@@ -140,6 +157,9 @@ export default function SacarTurno() {
             Paciente: <strong>{nombrePaciente}</strong>
           </p>
           <p className="mb-2">
+            Obra social: <strong>{obrasocial} </strong>
+          </p>
+          <p className="mb-2">
             Especialidad: <strong>{especialidad}</strong>
           </p>
           <p className="mb-2">
@@ -153,6 +173,7 @@ export default function SacarTurno() {
             onClick={() => {
               setTurnoConfirmado(false);
               setNombrePaciente("");
+              setObraSocial("");
               setEspecialidad("");
               setMedico("");
               setFecha("");
